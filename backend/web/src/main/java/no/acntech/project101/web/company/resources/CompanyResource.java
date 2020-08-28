@@ -22,6 +22,8 @@ import no.acntech.project101.company.service.CompanyService;
 import no.acntech.project101.web.company.resources.converter.CompanyConverter;
 import no.acntech.project101.web.company.resources.converter.CompanyDtoConverter;
 
+import javax.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("companies")
@@ -62,7 +64,7 @@ public class CompanyResource {
     }
 
     @PostMapping
-    public ResponseEntity createCompany(@RequestBody final CompanyDto companyDto) {
+    public ResponseEntity createCompany(@Valid @RequestBody final CompanyDto companyDto) {
         final Company convert = companyConverter.convert(companyDto);
         final Company saved = companyService.save(convert);
         final URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -97,7 +99,7 @@ public class CompanyResource {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity updateCompany(@PathVariable final Long id, @RequestBody final CompanyDto companyDto) {
+    public ResponseEntity updateCompany(@PathVariable final Long id, @Valid @RequestBody final CompanyDto companyDto) {
         final Optional<Company> optionalCompany = companyService.findById(id);
 
         if (optionalCompany.isPresent()) {
