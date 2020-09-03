@@ -3,10 +3,14 @@ import {connect} from "react-redux";
 import {RootStateType} from "../types/store";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
-import {getEmployees} from "../store/actions/employees-actions";
+import {deleteEmployee, getEmployees} from "../store/actions/employees-actions";
 import {Button, Card, CardBody, CardText, CardTitle, Table} from "reactstrap";
 import {FaMale, FaSyncAlt} from "react-icons/fa";
-import {CreateCompanyModalConnected, DeleteButton, EditCompanyModalConnected} from "../containers";
+import {
+    CreateEmployeeModalConnected,
+    EditEmployeeModalConnected,
+    DeleteButton,
+} from "../containers";
 
 type Props = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
@@ -33,11 +37,13 @@ class EmployeeListPage extends Component<Props> {
                     <td>{employee.dateOfBirth}</td>
                     <td>{employee.companyId}</td>
                     <td className="table-buttons">
+                        <EditEmployeeModalConnected
+                            id={employee.id}
+                            onEdited={this.apiReadAllEmployees} />
                         <DeleteButton
                             title="Delete employee"
-                            text="Are you sure you want to delete this employee? All connected employees will be deleted as well!"
-                            id={employee.id}
-                             />
+                            text="Are you sure you want to delete this employee?"
+                            id={employee.id} />
                     </td>
                 </tr>
             );
@@ -71,6 +77,7 @@ class EmployeeListPage extends Component<Props> {
                     <CardTitle tag="h3"><FaMale /> List of employees</CardTitle>
                     <div className="card-action">
                         <Button color="secondary" onClick={this.apiReadAllEmployees}><FaSyncAlt /></Button> {' '}
+                        <CreateEmployeeModalConnected onCreated={this.apiReadAllEmployees} />
                     </div>
                     <CardText tag="div">
                         {employees.length > 0 ? employeesTable : emptyTable}
@@ -86,7 +93,8 @@ const mapStateToProps = (state: RootStateType) => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<RootStateType, undefined, AnyAction>) => ({
-    getEmployees: () => dispatch(getEmployees())
+    getEmployees: () => dispatch(getEmployees()),
+    removeEmployee: (id: string) => dispatch(deleteEmployee(id))
 });
 
 
