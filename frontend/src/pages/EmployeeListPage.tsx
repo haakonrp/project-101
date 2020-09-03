@@ -24,6 +24,11 @@ class EmployeeListPage extends Component<Props> {
         this.props.getEmployees();
     }
 
+    apiDeleteEmployee = async (id: any) => {
+        await this.props.removeEmployee(id);
+        this.apiReadAllEmployees();
+    }
+
     render() {
         const employees = this.props.employees || [];
 
@@ -43,7 +48,8 @@ class EmployeeListPage extends Component<Props> {
                         <DeleteButton
                             title="Delete employee"
                             text="Are you sure you want to delete this employee?"
-                            id={employee.id} />
+                            id={employee.id}
+                            onYes={this.apiDeleteEmployee}/>
                     </td>
                 </tr>
             );
