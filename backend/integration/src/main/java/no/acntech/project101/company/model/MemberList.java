@@ -1,14 +1,21 @@
 package no.acntech.project101.company.model;
 
-public class MemberData {
+import java.util.ArrayList;
+import java.util.List;
 
-    private String person;
+public class MemberList {
 
-    public String getPerson() {
-        return person;
+    private List<Person> data;
+
+    public MemberList() {
+        this.data = new ArrayList<>();
     }
 
-    public void setPerson(final String person) {
-        this.person = person;
+    public List<Person> getData() {
+        return data;
+    }
+
+    public void setData(List<Person> data) {
+        this.data = data;
     }
 }

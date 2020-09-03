@@ -1,8 +1,13 @@
 package no.acntech.project101.company.service;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import no.acntech.project101.company.model.Person;
+import no.acntech.project101.employee.Employee;
+import no.acntech.project101.employee.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
 import no.acntech.project101.company.Company;
@@ -14,11 +19,14 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final BrregRestClient brregRestClient;
+    private final EmployeeService employeeService;
 
     public CompanyService(final CompanyRepository companyRepository,
-                          final BrregRestClient brregRestClient) {
+                          final BrregRestClient brregRestClient,
+                          final EmployeeService employeeService) {
         this.companyRepository = companyRepository;
         this.brregRestClient = brregRestClient;
+        this.employeeService = employeeService;
     }
 
     public Company save(Company company) {
@@ -27,9 +35,25 @@ public class CompanyService {
 
     public Company save(final String organizationNumber) {
         final String organizationName = brregRestClient.lookupOrganizationName(organizationNumber);
+        final List<Person> orgMembers = brregRestClient.lookupOrganizationMembers(organizationNumber);
 
         final Company company = new Company(organizationName, organizationNumber);
-        return save(company);
+        final Company savedCompany = save(company);
+
+        for (int i = 0; i < orgMembers.size(); i++) {
+            final Person p = orgMembers.get(i);
+            final int idx = p.getPerson().lastIndexOf(' ');
+
+            final String firstName = p.getPerson().substring(0, idx);
+            final String lastName = p.getPerson().substring(idx + 1);
+            final LocalDate dateOfBirth = LocalDate.of(1996, 04, 03); // TODO: fetch DOB externally
+
+            final Employee e = new Employee(firstName, lastName, dateOfBirth);
+            e.setCompany(savedCompany);
+            employeeService.save(e);
+        }
+
+        return savedCompany;
     }
 
     public List<Company> findAll() {

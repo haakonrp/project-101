@@ -1,6 +1,6 @@
 package no.acntech.project101.company.model;
 
-public class MemberData {
+public class Person {
 
     private String person;
 
